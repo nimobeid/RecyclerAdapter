@@ -1,0 +1,104 @@
+import android.app.AlertDialog;
+import android.app.LauncherActivity;
+import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.v7.view.menu.MenuView;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.jar.Attributes;
+
+import static android.app.PendingIntent.getActivity;
+import static android.media.CamcorderProfile.get;
+import static android.support.v7.widget.RecyclerView.*;
+import static java.nio.file.Files.size;
+import static java.security.AccessController.getContext;
+
+class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder>  {
+
+    private ArrayList<ListProvider> listProviders = new ArrayList<>();
+   private Context ctx;
+
+   public RecyclerAdapter( ArrayList<ListProvider> listProviders, Context ctx) {
+
+        this.listProviders = listProviders;
+        this.ctx = ctx;
+
+
+    }
+
+
+    @NonNull
+    @Override
+    public RecyclerAdapter.ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, int i) {
+        ViewHolder viewHolder;
+
+
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate( R.layout.image_layout, parent,false );
+        viewHolder  = new ViewHolder(view,ctx ,listProviders);
+
+      return viewHolder;
+    }
+
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        ListProvider listProvider;
+        listProvider= listProviders.get(position);
+
+
+        holder.archive_id.setImageResource(listProvider.getImage_id() );
+    }
+
+    @Override
+    public int getItemCount() {
+        return listProviders.size();
+    }
+
+
+
+    public static  class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+
+        ImageView archive_id;
+        TextView archive_name, archive_content;
+      ArrayList<ListProvider> listProviders = new ArrayList<ListProvider>(  );
+      Context ctx;
+        public ViewHolder(@NonNull View view, Context ctx, ArrayList<ListProvider> listProviders) {
+            super( view );
+            view.setOnClickListener( this );
+            this.ctx = ctx;
+            this.listProviders = listProviders;
+            archive_name = (TextView) view.findViewById( R.id.archive_name );
+            archive_id = (ImageView) view.findViewById( R.id.archive_id);
+            archive_content = (TextView) view.findViewById( R.id.archive_content );
+        }
+
+
+
+        @Override
+        public void onClick(View view) {
+
+            int position = getAdapterPosition();
+            ListProvider listProvider = this.listProviders.get(position);
+            Intent intent = new Intent( this.ctx,GalleryActivity.class  );
+            intent.putExtra("img_id", listProvider.getImage_id());
+
+            this.ctx.startActivity( intent );
+
+
+        }
+    }
